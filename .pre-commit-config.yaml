@@ -1,4 +1,3 @@
-exclude: "cliport/environments/assets/"
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
@@ -20,3 +19,10 @@ repos:
       - id: isort
         name: isort (python)
         args: ["--profile", "black", "--filter-files"]
+  - repo: local
+    hooks:
+      - id: custom-bash-command
+        name: Conda env export
+        entry: bash -c 'conda env export > environment_$CONDA_DEFAULT_ENV.yml'
+        language: system
+        pass_filenames: false
