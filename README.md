@@ -1,6 +1,6 @@
 # NuScenes-Download-CLI
 
-This repo provide the scripts to download various datasets in [NuScenes](https://www.nuscenes.org/).
+This repo provides the scripts to download various datasets in [NuScenes](https://www.nuscenes.org/).
 
 ## Usage
 
