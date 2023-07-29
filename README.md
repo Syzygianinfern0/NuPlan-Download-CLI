@@ -17,7 +17,7 @@ The URLs should be valid for about five days. If you need to download the files 
 
 ```bash
 python download_nuscenes.py --username <username> --password <password>
-wget -i download_links.txt
+sh download_commands.txt
 ```
 
 ## Why
