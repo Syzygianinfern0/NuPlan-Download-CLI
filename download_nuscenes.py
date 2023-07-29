@@ -5,10 +5,6 @@ import requests
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
-# The URL prefix of the NuScenes dataset. Fetched from the request url.
-BASE_URL = "https://o9k5xn5546.execute-api.us-east-1.amazonaws.com/v1/archives/v1.0/"
-
-
 def login(username, password):
     headers = {
         "content-type": "application/x-amz-json-1.1",
@@ -34,7 +30,10 @@ def login(username, password):
     return token
 
 
-def get_download_url(token, url):
+def get_download_url(token, file_name):
+    # The URL prefix of the NuScenes dataset. Fetched from the request url.
+    BASE_URL = "https://o9k5xn5546.execute-api.us-east-1.amazonaws.com/v1/archives/v1.0/"
+
     headers = {
         "authorization": "Bearer " + token,
     }
@@ -45,6 +44,7 @@ def get_download_url(token, url):
         "project": "nuScenes",
     }
 
+    url = BASE_URL + file_name
     response = requests.get(
         url,
         params=params,
@@ -55,12 +55,17 @@ def get_download_url(token, url):
 
     return download_url
 
-
 def main():
     parser = argparse.ArgumentParser(description="Download nuPlan dataset")
     parser.add_argument("--username")
     parser.add_argument("--password")
+    parser.add_argument("--data_output_dir")
     args = parser.parse_args()
+
+    # If data_output_dir is not provided, by default we will save the result in "downloads/".
+    data_output_dir = args.data_output_dir
+    if not data_output_dir:
+        data_output_dir = "downloads"
 
     # requests session
     with requests.Session() as s:
@@ -70,35 +75,40 @@ def main():
         # ====================
         # NuScenes Trainval Set
         # ====================
-        links = [BASE_URL + f"v1.0-trainval{i:02d}_blobs.tgz" for i in range(1, 11)]
+        file_names = [f"v1.0-trainval{i:02d}_blobs.tgz" for i in range(1, 11)]
 
         # Metadata
-        links += [BASE_URL + "v1.0-trainval_meta.tgz"]
+        file_names += ["v1.0-trainval_meta.tgz"]
 
         # ====================
         # NuScenes Test Set
         # ====================
-        links += [BASE_URL + "v1.0-test_blobs.tgz"]
+        file_names += ["v1.0-test_blobs.tgz"]
 
         # Metadata
-        links += [BASE_URL + "v1.0-test_meta.tgz"]
+        file_names += ["v1.0-test_meta.tgz"]
 
         # ====================
         # Shared data
         # ====================
         # CAN bus expansion
-        links += [BASE_URL + "can_bus.zip"]
+        file_names += ["can_bus.zip"]
 
         # Map expansion (v1.3)
-        links += [BASE_URL + "nuScenes-map-expansion-v1.3.zip"]
+        file_names += ["nuScenes-map-expansion-v1.3.zip"]
 
-        download_links = Parallel(n_jobs=12)(delayed(get_download_url)(login_token, link) for link in tqdm(links))
+        download_links = Parallel(n_jobs=12)(delayed(get_download_url)(login_token, file_name) for file_name in tqdm(file_names))
 
-        # write download links to file
-        with open("download_links.txt", "w") as f:
-            for link in download_links:
-                f.write(link + "\n")
-
+        # write download commands to file
+        with open("download_commands.txt", "w") as f:
+            # a command to create the output directory if it does not exist.
+            f.write(f"mkdir -p {data_output_dir}\n")
+            # a command to enter the output directory.
+            f.write(f"cd {data_output_dir}\n")
+            # commands to download each file.
+            for i in range(len(download_links)):
+                command = f"wget -O {file_names[i]} \"{download_links[i]}\"\n"
+                f.write(command)
 
 if __name__ == "__main__":
     main()

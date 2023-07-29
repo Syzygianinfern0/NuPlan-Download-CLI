@@ -4,6 +4,7 @@
 
 # Files
 download_links.txt
+download_commands.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
