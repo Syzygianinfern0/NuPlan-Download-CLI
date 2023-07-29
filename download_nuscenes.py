@@ -1,9 +1,11 @@
 import argparse
 import json
-
 import requests
+import utils
+
 from joblib import Parallel, delayed
 from tqdm import tqdm
+
 
 def login(username, password):
     headers = {
@@ -32,7 +34,9 @@ def login(username, password):
 
 def get_download_url(token, file_name):
     # The URL prefix of the NuScenes dataset. Fetched from the request url.
-    BASE_URL = "https://o9k5xn5546.execute-api.us-east-1.amazonaws.com/v1/archives/v1.0/"
+    BASE_URL = (
+        "https://o9k5xn5546.execute-api.us-east-1.amazonaws.com/v1/archives/v1.0/"
+    )
 
     headers = {
         "authorization": "Bearer " + token,
@@ -55,18 +59,17 @@ def get_download_url(token, file_name):
 
     return download_url
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Download nuPlan dataset")
+    parser = argparse.ArgumentParser(description="Download nuScenes dataset")
     parser.add_argument("--username")
     parser.add_argument("--password")
-    parser.add_argument("--data_output_dir")
+    parser.add_argument(
+        "--data_output_dir", type=str, default=utils.get_default_data_output_dir()
+    )
     args = parser.parse_args()
 
-    # If data_output_dir is not provided, by default we will save the result in "downloads/".
     data_output_dir = args.data_output_dir
-    if not data_output_dir:
-        data_output_dir = "downloads"
-
     # requests session
     with requests.Session() as s:
         # login and get auth token
@@ -97,7 +100,10 @@ def main():
         # Map expansion (v1.3)
         file_names += ["nuScenes-map-expansion-v1.3.zip"]
 
-        download_links = Parallel(n_jobs=12)(delayed(get_download_url)(login_token, file_name) for file_name in tqdm(file_names))
+        download_links = Parallel(n_jobs=12)(
+            delayed(get_download_url)(login_token, file_name)
+            for file_name in tqdm(file_names)
+        )
 
         # write download commands to file
         with open("download_commands.txt", "w") as f:
@@ -107,8 +113,9 @@ def main():
             f.write(f"cd {data_output_dir}\n")
             # commands to download each file.
             for i in range(len(download_links)):
-                command = f"wget -O {file_names[i]} \"{download_links[i]}\"\n"
+                command = f'wget -O {file_names[i]} "{download_links[i]}"\n'
                 f.write(command)
+
 
 if __name__ == "__main__":
     main()
