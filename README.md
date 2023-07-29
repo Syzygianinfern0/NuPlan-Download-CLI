@@ -20,7 +20,7 @@ python download_nuscenes.py --username <username> --password <password>
 sh download_commands.txt
 ```
 
-### Extract the downloaded data
+### Extract the data
 
 After you download the data, you can extract the download data using the following python script.
 
