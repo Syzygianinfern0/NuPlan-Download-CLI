@@ -92,6 +92,11 @@ def main():
         file_names += ["v1.0-test_meta.tgz"]
 
         # ====================
+        # NuScenes Mini 
+        # ====================
+        file_names += ["v1.0-mini.tgz"]
+
+        # ====================
         # Shared data
         # ====================
         # CAN bus expansion
