@@ -5,7 +5,9 @@ import requests
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
-BASE_URL = "https://o9k5xn5546.execute-api.us-east-1.amazonaws.com/v1/archives/nuplan-v1.1/"
+BASE_URL = (
+    "https://o9k5xn5546.execute-api.us-east-1.amazonaws.com/v1/archives/nuplan-v1.1/"
+)
 
 
 def login(username, password):
@@ -66,28 +68,52 @@ def main():
 
         # nuPlan Test Set
         ## Lidars
-        links = [BASE_URL + f"sensor_blobs/test_set/nuplan-v1.1_test_lidar_{i}.zip" for i in range(12)]
+        links = [
+            BASE_URL + f"sensor_blobs/test_set/nuplan-v1.1_test_lidar_{i}.zip"
+            for i in range(12)
+        ]
         ## Cameras
-        links += [BASE_URL + f"sensor_blobs/test_set/nuplan-v1.1_test_camera_{i}.zip" for i in range(12)]
+        links += [
+            BASE_URL + f"sensor_blobs/test_set/nuplan-v1.1_test_camera_{i}.zip"
+            for i in range(12)
+        ]
         # nuPlan Train Set
         ## Lidars
-        links += [BASE_URL + f"sensor_blobs/train_set/nuplan-v1.1_train_lidar_{i}.zip" for i in range(43)]
+        links += [
+            BASE_URL + f"sensor_blobs/train_set/nuplan-v1.1_train_lidar_{i}.zip"
+            for i in range(43)
+        ]
         ## Cameras
-        links += [BASE_URL + f"sensor_blobs/train_set/nuplan-v1.1_train_camera_{i}.zip" for i in range(43)]
+        links += [
+            BASE_URL + f"sensor_blobs/train_set/nuplan-v1.1_train_camera_{i}.zip"
+            for i in range(43)
+        ]
         # nuScenes Val Set
         ## Lidars
-        links += [BASE_URL + f"sensor_blobs/val_set/nuplan-v1.1_val_lidar_{i}.zip" for i in range(12)]
+        links += [
+            BASE_URL + f"sensor_blobs/val_set/nuplan-v1.1_val_lidar_{i}.zip"
+            for i in range(12)
+        ]
         ## Cameras
-        links += [BASE_URL + f"sensor_blobs/val_set/nuplan-v1.1_val_camera_{i}.zip" for i in range(12)]
+        links += [
+            BASE_URL + f"sensor_blobs/val_set/nuplan-v1.1_val_camera_{i}.zip"
+            for i in range(12)
+        ]
         # Maps
         links += [BASE_URL + "nuplan-maps-v1.0.zip"]
         # Mini Split
         links += [BASE_URL + "nuplan-v1.1_mini.zip"]
         # Mini Sensors
         ## Lidars
-        links += [BASE_URL + f"sensor_blobs/mini_set/nuplan-v1.1_mini_lidar_{i}.zip" for i in range(9)]
+        links += [
+            BASE_URL + f"sensor_blobs/mini_set/nuplan-v1.1_mini_lidar_{i}.zip"
+            for i in range(9)
+        ]
         ## Cameras
-        links += [BASE_URL + f"sensor_blobs/mini_set/nuplan-v1.1_mini_camera_{i}.zip" for i in range(9)]
+        links += [
+            BASE_URL + f"sensor_blobs/mini_set/nuplan-v1.1_mini_camera_{i}.zip"
+            for i in range(9)
+        ]
         # Log DB Train Splits
         links += [
             BASE_URL + f"nuplan-v1.1_train_{city}.zip"
@@ -108,7 +134,9 @@ def main():
         # Log DB Test Splits
         links += [BASE_URL + "nuplan-v1.1_test.zip"]
 
-        download_links = Parallel(n_jobs=12)(delayed(get_download_url)(login_token, link) for link in tqdm(links))
+        download_links = Parallel(n_jobs=12)(
+            delayed(get_download_url)(login_token, link) for link in tqdm(links)
+        )
 
         # write download links to file
         with open("download_links.txt", "w") as f:
