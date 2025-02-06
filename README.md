@@ -1,5 +1,17 @@
 # NuPlan-Download-CLI
 
+## Download Scripts
+
+```bash
+git clone https://github.com/Syzygianinfern0/NuPlan-Download-CLI.git
+```
+
+## ENV Setup
+```bash
+cd NuPlan-Download-CLI
+conda env create -f environment_fun.yml
+conda activate fun
+```
 
 ## Usage
 

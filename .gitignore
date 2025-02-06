@@ -4,7 +4,7 @@
 
 # Files
 download_links.txt
-
+nuplan-v1.1_test.zip
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
