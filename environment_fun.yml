@@ -27,4 +27,6 @@ dependencies:
   - xz=5.2.6=h166bdaf_0
   - pip:
       - joblib==1.2.0
+      - requests==2.32.3
+      - tqdm==4.67.1
 prefix: /home/mai/ssharan/mambaforge/envs/fun
